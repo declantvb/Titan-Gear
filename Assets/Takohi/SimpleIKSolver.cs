@@ -3,8 +3,8 @@ using System.Collections;
 
 public class SimpleIKSolver : MonoBehaviour
 {
-	private const float IK_POS_THRESH = 0.125f;
-	private const int MAX_IK_TRIES = 20;
+	private const float IK_POS_THRESH = 0.001f;
+	private const int MAX_IK_TRIES = 30;
 	
 	[System.Serializable]
 	public class JointEntity
