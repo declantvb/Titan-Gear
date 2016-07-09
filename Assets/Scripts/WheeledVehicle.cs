@@ -3,23 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class WheeledVehicle : MonoBehaviour
+public abstract class WheeledVehicle : MonoBehaviour
 {
 	[Header("Ground Movement")]
 	[SerializeField]
-	float DriveForce = 100f;
+	public float DriveForce = 100f;
 	[SerializeField]
-	float MaxGroundSpeed = 40f;
+	public float MaxGroundSpeed = 40f;
 	[SerializeField]
-	float MaxSteeringAngle = 35f;
+	public float MaxSteeringAngle = 35f;
 	[SerializeField]
-	AnimationCurve SpeedVsSteeringFactor;          //Defines how much steering ability is decreased as speed increases
+	public AnimationCurve SpeedVsSteeringFactor;          //Defines how much steering ability is decreased as speed increases
 	[SerializeField]
-	AnimationCurve SpeedVsDownforce;
+	public AnimationCurve SpeedVsDownforce;
 	[SerializeField]
-	bool UseDownforce = true;
+	public bool UseDownforce = true;
 	[SerializeField]
-	Transform CenterOfMass;
+	public Transform CenterOfMass;
 
 	public Rigidbody rb;
 
@@ -27,28 +27,36 @@ public class WheeledVehicle : MonoBehaviour
 	List<VehicleWheel> wheels;
 
 	// Use this for initialization
-	void Start()
+	public virtual void Start()
 	{
 		rb = GetComponent<Rigidbody>();
 		wheels = GetComponentsInChildren<VehicleWheel>().ToList();
 	}
 
 	// Update is called once per frame
-	void Update()
+	public virtual void Update()
 	{
-		float throttle = Input.GetAxis("Vertical");
-		float steering = Input.GetAxis("Horizontal");
+		float throttle = GetThrottle();
+		float steering = GetSteering();
 
 		//Update rigidbody centerofmass position
 		rb.centerOfMass = transform.InverseTransformPoint(CenterOfMass.position);
 
-		//var handbraking = _state.Inputs.Handbrake > 0;
-		//Wheel_BL.Handbraking = handbraking;
-		//Wheel_BR.Handbraking = handbraking;
-		//Wheel_FL.Handbraking = handbraking;
-		//Wheel_FR.Handbraking = handbraking;
-
 		//Add drive force   
+		DoDriving(throttle);
+
+		//Apply steering
+		DoSteering(steering);
+
+		//Apply downforce
+		//if (UseDownforce)
+		//{
+		//	rb.AddForce(0, -SpeedVsDownforce.Evaluate(rb.velocity.magnitude), 0);
+		//}
+	}
+
+	private void DoDriving(float throttle)
+	{
 		if (rb.velocity.magnitude < MaxGroundSpeed)
 		{
 			var drivableWheels = wheels.Where(x => x.Drivable);
@@ -58,65 +66,6 @@ public class WheeledVehicle : MonoBehaviour
 				wheel.DriveWheel(driveForce);
 			}
 		}
-
-		//Apply steering
-		DoSteering(steering);
-
-		//Debug.Log(rb.velocity.magnitude);
-
-		//Apply downforce
-		//if (UseDownforce)
-		//{
-		//	rb.AddForce(0, -SpeedVsDownforce.Evaluate(rb.velocity.magnitude), 0);
-		//}
-
-		//Count wheels on ground
-		//int wheelsOnGround = GetCountOfWheelsOnGround();
-
-		//Apply jump        
-		//jumpCooldownElapsed += Time.deltaTime;
-		//if (_state.Inputs.Jump > 0 && _previousState.Inputs.Jump <= 0)
-		//{
-		//	// if at least 3/4 wheels are touching ground, allow player to press jump button and apply jump force
-		//	if (wheelsOnGround >= 3 && jumpCooldownElapsed >= JumpCooldownTime)
-		//	{
-		//		rb.AddForce(JumpForce * transform.up, ForceMode.Force);
-		//		jumpCooldownElapsed = 0;
-		//	}
-
-		//	//If player is not on the ground (i.e, they have jumped once already, or are falling), engage flight mode when they press jump button
-		//	else if (wheelsOnGround == 0)
-		//	{
-		//		FlightModeEngaged = true;
-		//	}
-		//}
-
-		//Check if player has landed since last frame and do necessary things 
-		//if (wheelsOnGround >= 4)
-		//{
-		//	//End flight mode when car is fully landed
-		//	FlightModeEngaged = false;
-		//}
-
-		////Apply air movement if player has pressed space once to jump, and then another to engage flight mode
-		//if (FlightModeEngaged)
-		//{
-		//	rb.angularDrag = AngDrag_FlightMode;
-
-		//	if (_state.Inputs.Handbrake > 0)
-		//	{
-		//		rb.AddRelativeTorque(0, 0, -RollTorque * _state.Inputs.Horizontal, ForceMode.Force);
-		//	}
-		//	else
-		//	{
-		//		rb.AddRelativeTorque(0, YawTorque * _state.Inputs.Horizontal, 0, ForceMode.Force);
-		//	}
-		//	rb.AddRelativeTorque(-PitchTorque * _state.Inputs.Pitch, 0, 0, ForceMode.Force);
-		//}
-		//else
-		//{
-		//	rb.angularDrag = AngDrag_Grounded;
-		//}
 	}
 
 	private void DoSteering(float steering)
@@ -146,12 +95,12 @@ public class WheeledVehicle : MonoBehaviour
 		float rearSteeringFactor = CenterOfMass.InverseTransformPoint(innerWheel.transform.position).z > 0 ? 1 : -1;
 
 		innerWheel.transform.localEulerAngles = new Vector3(0, steering * MaxSteeringAngle * SpeedVsSteeringFactor.Evaluate(rb.velocity.magnitude) * rearSteeringFactor, 0);
-		
+
 		var nonSteerableWheels = wheels.Where(x => !x.Steerable);
 		Vector3 fixedWheelCentre;
 		if (nonSteerableWheels.Any())
 		{
-			fixedWheelCentre = nonSteerableWheels.Aggregate(Vector3.zero, (acc, val) => acc + val.transform.position) / nonSteerableWheels.Count(); 
+			fixedWheelCentre = nonSteerableWheels.Aggregate(Vector3.zero, (acc, val) => acc + val.transform.position) / nonSteerableWheels.Count();
 		}
 		else
 		{
@@ -200,4 +149,8 @@ public class WheeledVehicle : MonoBehaviour
 			wheel.transform.localEulerAngles = new Vector3(0, angle, 0);
 		}
 	}
+
+	public abstract float GetSteering();
+
+	public abstract float GetThrottle();
 }

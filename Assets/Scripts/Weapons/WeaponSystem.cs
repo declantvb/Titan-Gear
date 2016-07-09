@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-public class WeaponSystem : MonoBehaviour
+public abstract class WeaponSystem : MonoBehaviour
 {
 	private Transform player;
 	private Transform _bulletStartPoint;
@@ -29,14 +29,16 @@ public class WeaponSystem : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate()
 	{
+		HandleLook();
+
 		WeaponSwitching();
 
 		HandleFiring();
 	}
 
-	private void WeaponSwitching()
+	public void WeaponSwitching()
 	{
-		if (Input.GetAxis("WeaponSwitch") > 0)
+		if (SwitchWeapon())
 		{
 			if (!SwitchingWeapon)
 			{
@@ -50,11 +52,11 @@ public class WeaponSystem : MonoBehaviour
 		}
 	}
 
-	private void HandleFiring()
+	public void HandleFiring()
 	{
-		var mousedown = Input.GetAxis("Fire1");
+		var fire = FireWeapon();
 
-		if (mousedown > 0f && cooldown <= 0f)
+		if (fire && cooldown <= 0f)
 		{
 			GameObject newBullet = Instantiate(CurrentWeapon.ProjectilePrefab);
 			newBullet.transform.position = _bulletStartPoint.position;
@@ -86,4 +88,10 @@ public class WeaponSystem : MonoBehaviour
 			cooldown -= Time.fixedDeltaTime;
 		}
 	}
+
+	public abstract void HandleLook();
+
+	public abstract bool FireWeapon();
+
+	public abstract bool SwitchWeapon();
 }
