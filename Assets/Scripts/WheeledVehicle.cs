@@ -29,7 +29,7 @@ public abstract class WheeledVehicle : MonoBehaviour
 	// Use this for initialization
 	public virtual void Start()
 	{
-		rb = GetComponent<Rigidbody>();
+		rb = GetComponentInParent<Rigidbody>();
 		wheels = GetComponentsInChildren<VehicleWheel>().ToList();
 	}
 
