@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Laser : MonoBehaviour
 {
 	public float Duration;
-
-	LineRenderer line;
+	public float DamagePerSecond;
+	private LineRenderer line;
 
 	// Use this for initialization
-	void Start()
+	private void Start()
 	{
 		line = GetComponent<LineRenderer>();
+		Destroy(gameObject, Duration);
 	}
 
 	// Update is called once per frame
-	void Update()
+	private void Update()
 	{
 		Ray ray = new Ray(transform.position, transform.forward);
 
@@ -24,17 +24,17 @@ public class Laser : MonoBehaviour
 		if (Physics.Raycast(ray, out hit, 100))
 		{
 			line.SetPosition(1, hit.point);
+			var health = hit.collider.GetComponent<Health>();
+			if (health != null)
+			{
+				var damage = DamagePerSecond * Time.deltaTime;
+				print(damage);
+				health.YaGotShot(damage);
+			}
 		}
 		else
 		{
-			line.SetPosition(1, ray.GetPoint(100)); 
-		}
-
-
-		Duration -= Time.deltaTime;
-		if (Duration < 0)
-		{
-			Destroy(gameObject);
+			line.SetPosition(1, ray.GetPoint(100));
 		}
 	}
 }

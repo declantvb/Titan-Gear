@@ -9,6 +9,7 @@ public class AIMover : MonoBehaviour
 	private Transform CurrentTransformTarget;
 	public float OffsetDistance;
 	public float WanderDistance;
+	public bool CanShoot;
 
 	// Use this for initialization
 	private void Start()
@@ -50,6 +51,7 @@ public class AIMover : MonoBehaviour
 		if (CurrentTransformTarget != null)
 		{
 			weapons.Target = CurrentTransformTarget;
+			weapons.ShootingEnabled = CanShoot;
 		}
 	}
 

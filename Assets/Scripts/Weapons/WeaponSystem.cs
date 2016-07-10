@@ -69,11 +69,14 @@ public abstract class WeaponSystem : MonoBehaviour
 				case WeaponStyle.Pulse:
 					newBullet.SetLayerRecursively(LayerMask.NameToLayer("Bullets"));
 					newBullet.GetComponent<Rigidbody>().AddForce((_bulletStartPoint.forward * CurrentWeapon.InitialBulletVelocity) + player.GetComponent<Rigidbody>().velocity, ForceMode.VelocityChange);
+					var projectile = newBullet.GetComponent<Projectile>();
+					projectile.DamageModifier = CurrentWeapon.Damage;
 					break;
 				case WeaponStyle.Laser:
 					newBullet.transform.SetParent(_bulletStartPoint.transform);
 					var laser = newBullet.GetComponent<Laser>();
 					laser.Duration = CurrentWeapon.Duration;
+					laser.DamagePerSecond = CurrentWeapon.Damage;
 					break;
 				case WeaponStyle.Hitscan:
 				default:

@@ -6,8 +6,15 @@ public class WeaponSystemAI : WeaponSystem
 	public Transform Target;
 	public float FireDistance;
 
+	public bool ShootingEnabled;
+
 	public override bool FireWeapon()
 	{
+		if (!ShootingEnabled)
+		{
+			return false;
+		}
+
 		if (Target != null)
 		{
 			//check angle
@@ -30,7 +37,7 @@ public class WeaponSystemAI : WeaponSystem
 			var direction = Mathf.Sign(Vector3.Dot(Vector3.Cross(currentDir, targetDir), transform.up));
 			var angle = Vector3.Angle(currentDir, moveDir) * direction;
 
-			transform.Rotate(transform.up, angle);
+			transform.localRotation = Quaternion.Euler(0, transform.localRotation.eulerAngles.y + angle, 0);
 		}
 	}
 

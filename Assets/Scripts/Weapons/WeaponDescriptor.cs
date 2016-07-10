@@ -12,6 +12,7 @@ public class WeaponDescriptor
 	public float InitialBulletVelocity;
 	public GameObject ProjectilePrefab;
 	public float Duration;
+	public float Damage;
 }
 
 public enum WeaponStyle
