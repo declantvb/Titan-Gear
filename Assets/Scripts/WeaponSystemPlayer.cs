@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class WeaponSystemPlayer : WeaponSystem
 {
@@ -26,19 +25,31 @@ public class WeaponSystemPlayer : WeaponSystem
 		if (MouseLook)
 		{
 			var mouseX = Input.GetAxis("Mouse X");
-			var mouseY = Input.GetAxis("Mouse Y");
+			var mouseY = -Input.GetAxis("Mouse Y"); //todo invert look option
 
-			transform.localEulerAngles += new Vector3(-mouseY, mouseX, 0);
+			var current = transform.localEulerAngles;
+			var currentY = current.x; // rotation about x axis
+			var relativeY = currentY > 180 ? currentY - 360 : currentY; // make negatives negative
+
+			var clampedY = relativeY + mouseY;
+
+			if (clampedY > 90) clampedY = 90;
+			else if (clampedY < -90) clampedY = -90;
+
+			var update = new Vector3(clampedY, current.y + mouseX, 0);
+
+			transform.localEulerAngles = update;
+			//transform.localEulerAngles += new Vector3(mouseY, mouseX, 0);
 		}
 	}
 
 	public override bool FireWeapon()
 	{
-		return Input.GetAxis("Fire1") > 0f;
+		return MouseLook && Input.GetAxis("Fire1") > 0f;
 	}
 
 	public override bool SwitchWeapon()
 	{
-		return Input.GetAxis("WeaponSwitch") > 0;
+		return MouseLook && Input.GetAxis("WeaponSwitch") > 0;
 	}
 }

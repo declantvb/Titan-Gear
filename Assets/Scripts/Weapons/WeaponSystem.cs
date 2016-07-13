@@ -1,95 +1,57 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public abstract class WeaponSystem : MonoBehaviour
 {
 	private Transform player;
-	private Transform _bulletStartPoint;
 
-	[Header("Weapons")]
 	[SerializeField]
-	public WeaponDescriptor[] AvailableWeapons = new WeaponDescriptor[0];
-	[SerializeField]
-	private int CurrentWeaponIndex = 0;
-	[SerializeField]
-	public WeaponDescriptor CurrentWeapon { get { return AvailableWeapons.ElementAtOrDefault(CurrentWeaponIndex); } }
-	[SerializeField]
-	private bool SwitchingWeapon;
-	[SerializeField]
-	private float cooldown = 0f;
+	private List<Weapon> ActiveWeapons = new List<Weapon>();
 
 	// Use this for initialization
-	void Start()
+	private void Start()
 	{
 		player = transform.root;
-		_bulletStartPoint = transform.FindChild("bullet_start");
 	}
 
 	// Update is called once per frame
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
 		HandleLook();
-
-		WeaponSwitching();
 
 		HandleFiring();
 	}
 
-	public void WeaponSwitching()
+	private void HandleFiring()
 	{
-		if (SwitchWeapon())
+		var playerVelocity = player.GetComponent<Rigidbody>().velocity;
+
+		if (FireWeapon())
 		{
-			if (!SwitchingWeapon)
+			bool updateWeapons = false;
+			foreach (var weapon in ActiveWeapons)
 			{
-				CurrentWeaponIndex = (CurrentWeaponIndex + 1) % AvailableWeapons.Length;
-				SwitchingWeapon = true;
+				if (weapon != null)
+				{
+					weapon.Fire(playerVelocity);
+				}
+				else
+				{
+					updateWeapons = true;
+				}
 			}
-		}
-		else
-		{
-			SwitchingWeapon = false;
+
+			if (updateWeapons)
+			{
+				UpdateActiveWeapons();
+			}
 		}
 	}
 
-	public void HandleFiring()
+	public void UpdateActiveWeapons()
 	{
-		var fire = FireWeapon();
-
-		if (fire && cooldown <= 0f)
-		{
-			GameObject newBullet = Instantiate(CurrentWeapon.ProjectilePrefab);
-			newBullet.transform.position = _bulletStartPoint.position;
-			newBullet.transform.rotation = _bulletStartPoint.rotation;
-
-			switch (CurrentWeapon.Style)
-			{
-				case WeaponStyle.Projectile:
-				case WeaponStyle.ProjectileStraight:
-				case WeaponStyle.Pulse:
-					newBullet.SetLayerRecursively(LayerMask.NameToLayer("Bullets"));
-					newBullet.GetComponent<Rigidbody>().AddForce((_bulletStartPoint.forward * CurrentWeapon.InitialBulletVelocity) + player.GetComponent<Rigidbody>().velocity, ForceMode.VelocityChange);
-					var projectile = newBullet.GetComponent<Projectile>();
-					projectile.DamageModifier = CurrentWeapon.Damage;
-					break;
-				case WeaponStyle.Laser:
-					newBullet.transform.SetParent(_bulletStartPoint.transform);
-					var laser = newBullet.GetComponent<Laser>();
-					laser.Duration = CurrentWeapon.Duration;
-					laser.DamagePerSecond = CurrentWeapon.Damage;
-					break;
-				case WeaponStyle.Hitscan:
-				default:
-					break;
-			}
-
-			cooldown = CurrentWeapon.Cooldown;
-		}
-
-		if (cooldown > 0)
-		{
-			cooldown -= Time.fixedDeltaTime;
-		}
+		ActiveWeapons = GetComponentsInChildren<Weapon>().ToList();
 	}
 
 	public abstract void HandleLook();
