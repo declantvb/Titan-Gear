@@ -4,6 +4,7 @@ public class PartSlot : MonoBehaviour
 {
 	//todo add name/identifiers
 	public SlotType Kind;
+
 	public GameObject currentPartPrefab;
 	public GameObject currentPartInstance;
 
@@ -13,8 +14,11 @@ public class PartSlot : MonoBehaviour
 
 		Destroy(currentPartInstance);
 
-		currentPartInstance = (GameObject)Instantiate(newPart, transform.position, transform.rotation);
-		currentPartInstance.transform.SetParent(transform);
+		if (newPart != null)
+		{
+			currentPartInstance = (GameObject)Instantiate(newPart, transform.position, transform.rotation);
+			currentPartInstance.transform.SetParent(transform);
+		}
 
 		currentPartPrefab = newPart;
 	}

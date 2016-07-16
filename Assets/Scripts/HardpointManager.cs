@@ -24,6 +24,8 @@ public class HardpointManager : MonoBehaviour
 
 	[SerializeField]
 	private WeaponSystem weaponSystem;
+	[SerializeField]
+	private EquipmentSystem equip;
 
 	// Use this for initialization
 	private void Start()
@@ -45,10 +47,10 @@ public class HardpointManager : MonoBehaviour
 					throw new System.Exception("invalid SlotType");
 			}
 		}
+		equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
 
-		ChangeMobility(CurrentMobilityPart);
-		ChangeTurret(CurrentTurretPart);
-		weaponSystem = GetComponentInChildren<WeaponSystem>();
+		ChangeMobility(MobilityParts[CurrentMobilityPart]);
+		ChangeTurret(TurretParts[CurrentTurretPart]);
 	}
 
 	// Update is called once per frame
@@ -56,69 +58,28 @@ public class HardpointManager : MonoBehaviour
 	{
 	}
 
-	private void OnGUI()
+	public void ChangeTurret(GameObject prefab)
 	{
-		if (showGUI)
-		{
-			GUI.BeginGroup(new Rect(10, 50, 150, 500));
-			var changeTurret = GUI.Button(new Rect(0, 0, 120, 25), "Change Turret");
-			var changeMobility = GUI.Button(new Rect(0, 35, 120, 25), "Change Mobility");
-			var changeWeapon = GUI.Button(new Rect(0, 70, 120, 25), WeaponPrefab.GetComponent<Weapon>().DisplayName);
-
-			GUI.BeginGroup(new Rect(0, 105, 150, 400));
-			var i = 0;
-			var weaponsChanged = false;
-			foreach (var slot in WeaponSlots)
-			{
-				var buttonPressed = GUI.Button(new Rect(0, i * 35, 120, 25), "Change Weapon " + i);
-				if (buttonPressed)
-				{
-					slot.ChangePart(WeaponPrefab);
-					weaponsChanged = true;
-				}
-				i++;
-			}
-
-			GUI.EndGroup();
-			GUI.EndGroup();
-
-			if (changeMobility)
-			{
-				ChangeMobility((CurrentMobilityPart + 1) % MobilityParts.Length);
-			}
-			if (changeTurret)
-			{
-				ChangeTurret((CurrentTurretPart + 1) % TurretParts.Length);
-				weaponsChanged = true;
-			}
-			if (changeWeapon)
-			{
-				CurrentWeaponPart = (CurrentWeaponPart + 1) % WeaponParts.Length;
-			}
-
-			if (weaponsChanged && weaponSystem != null)
-			{
-				weaponSystem.UpdateActiveWeapons();
-			}
-		}
-	}
-
-	private void ChangeTurret(int newIndex)
-	{
-		CurrentTurretPart = newIndex;
-		TurretSlot.ChangePart(TurretParts[CurrentTurretPart]);
+		TurretSlot.ChangePart(prefab);
 
 		var newTurret = TurretSlot.currentPartInstance;
 		weaponSystem = newTurret.GetComponentInChildren<WeaponSystem>();
 
 		// check for new hardpoints
 		UpdateHardpoints(newTurret);
+		equip.SetMainSlots(MobilitySlot, TurretSlot);
 	}
 
-	private void ChangeMobility(int newIndex)
+	public void ChangeMobility(GameObject prefab)
 	{
-		CurrentMobilityPart = newIndex;
-		MobilitySlot.ChangePart(MobilityParts[CurrentMobilityPart]);
+		MobilitySlot.ChangePart(prefab);
+		equip.SetMainSlots(MobilitySlot, TurretSlot);
+	}
+
+	public void ChangeWeapon(PartSlot slot, GameObject prefab)
+	{
+		slot.ChangePart(prefab);
+		weaponSystem.UpdateActiveWeapons();
 	}
 
 	private void UpdateHardpoints(GameObject turret)
@@ -128,5 +89,14 @@ public class HardpointManager : MonoBehaviour
 
 		// diff and update
 		WeaponSlots = weaponHardpoints.ToList();
+
+		//TODO fix
+		if (equip == null)
+		{
+			equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
+		}
+
+		//update inventory
+		equip.SetWeaponSlots(WeaponSlots);
 	}
 }
