@@ -42,7 +42,8 @@ public abstract class WeaponSystem : MonoBehaviour
 				}
 			}
 
-			if (updateWeapons)
+			//TODO
+			if (ActiveWeapons.Count == 0 || updateWeapons)
 			{
 				UpdateActiveWeapons();
 			}

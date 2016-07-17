@@ -28,7 +28,6 @@ public class Laser : MonoBehaviour
 			if (health != null)
 			{
 				var damage = DamagePerSecond * Time.deltaTime;
-				print(damage);
 				health.YaGotShot(damage);
 			}
 		}

@@ -42,6 +42,7 @@ public class Weapon : MonoBehaviour
 					newBullet.GetComponent<Rigidbody>().AddForce((_bulletStartPoint.forward * WeaponDescriptor.InitialBulletVelocity) + playerVelocity, ForceMode.VelocityChange);
 					var projectile = newBullet.GetComponent<Projectile>();
 					projectile.DamageModifier = WeaponDescriptor.Damage;
+					projectile.BlastRadius = WeaponDescriptor.Radius;
 					break;
 				case WeaponStyle.Laser:
 					newBullet.transform.SetParent(_bulletStartPoint.transform);

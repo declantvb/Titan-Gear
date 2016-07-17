@@ -6,6 +6,7 @@ public class AIMover : MonoBehaviour
 	private WheeledVehicleAI vehicle;
 	private WeaponSystemAI weapons;
 	private Vector3 CurrentMoveTarget;
+	[SerializeField]
 	private Transform CurrentTransformTarget;
 	public float OffsetDistance;
 	public float WanderDistance;
@@ -37,7 +38,7 @@ public class AIMover : MonoBehaviour
 
 			foreach (var collider in res)
 			{
-				if (collider.GetComponent<Player>())
+				if (collider.GetComponentInParent<Player>())
 				{
 					CurrentTransformTarget = collider.transform;
 					break;

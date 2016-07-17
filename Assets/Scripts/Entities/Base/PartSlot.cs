@@ -8,6 +8,11 @@ public class PartSlot : MonoBehaviour
 	public GameObject currentPartPrefab;
 	public GameObject currentPartInstance;
 
+	void Start()
+	{
+		ChangePart(currentPartPrefab);
+	}
+
 	public void ChangePart(GameObject newPart)
 	{
 		//need to copy over some things?

@@ -5,8 +5,10 @@ public class Health : MonoBehaviour
 {
 	public float MaxHealth;
 	public float CurrentHealth;
+
 	[Header("Healthbar Display")]
 	public bool DisplayInWorld = true;
+
 	public float healthbarWorldOffset = 3f;
 	public int healthBarTextHeight = 20;
 	public int healthbarHeight = 24;
@@ -54,7 +56,7 @@ public class Health : MonoBehaviour
 
 			if (enemy != null)
 			{
-				Destroy(gameObject);
+				enemy.Die();
 			}
 		}
 	}
@@ -67,27 +69,31 @@ public class Health : MonoBehaviour
 			var screenHeight = Camera.main.pixelHeight;
 
 			var pos = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, healthbarWorldOffset, 0));
-			var name = "Unknown";
-			if (enemy != null)
+			var heading = transform.position - Camera.main.transform.position;
+			if (Vector3.Dot(Camera.main.transform.forward, heading) > 0)
 			{
-				name = enemy.Name;
-			}
-			else if (player != null)
-			{
-				name = player.Name;
-			}
+				var name = "Unknown";
+				if (enemy != null)
+				{
+					name = enemy.Name;
+				}
+				else if (player != null)
+				{
+					name = player.Name;
+				}
 
-			var healthPercent = CurrentHealth / MaxHealth;
+				var healthPercent = CurrentHealth / MaxHealth;
 
-			var hbPos = new Vector2(pos.x - healthbarWidth/2, screenHeight - pos.y - screenspaceOffsetHeight);
-			var hbSize = new Vector2(healthbarWidth, healthbarHeight);
-			GUI.Label(new Rect(hbPos.x, hbPos.y - healthBarTextHeight, hbSize.x, healthBarTextHeight), name);
-			GUI.BeginGroup(new Rect(hbPos.x, hbPos.y, hbSize.x, hbSize.y));
-			GUI.Box(new Rect(0, 0, hbSize.x, hbSize.y), "", HealthBarBackground);
-			GUI.BeginGroup(new Rect(0, 0, hbSize.x * healthPercent, hbSize.y));
-			GUI.Box(new Rect(0, 0, hbSize.x, hbSize.y), "", HealthBarForeground);
-			GUI.EndGroup();
-			GUI.EndGroup();
+				var hbPos = new Vector2(pos.x - healthbarWidth / 2, screenHeight - pos.y - screenspaceOffsetHeight);
+				var hbSize = new Vector2(healthbarWidth, healthbarHeight);
+				GUI.Label(new Rect(hbPos.x, hbPos.y - healthBarTextHeight, hbSize.x, healthBarTextHeight), name);
+				GUI.BeginGroup(new Rect(hbPos.x, hbPos.y, hbSize.x, hbSize.y));
+				GUI.Box(new Rect(0, 0, hbSize.x, hbSize.y), "", HealthBarBackground);
+				GUI.BeginGroup(new Rect(0, 0, hbSize.x * healthPercent, hbSize.y));
+				GUI.Box(new Rect(0, 0, hbSize.x, hbSize.y), "", HealthBarForeground);
+				GUI.EndGroup();
+				GUI.EndGroup();
+			}
 		}
 	}
 

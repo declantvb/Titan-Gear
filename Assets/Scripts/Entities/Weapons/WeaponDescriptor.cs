@@ -13,6 +13,7 @@ public class WeaponDescriptor
 	public GameObject ProjectilePrefab;
 	public float Duration;
 	public float Damage;
+	public float Radius;
 }
 
 public enum WeaponStyle
