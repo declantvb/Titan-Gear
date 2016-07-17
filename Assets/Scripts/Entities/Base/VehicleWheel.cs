@@ -1,35 +1,41 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class VehicleWheel : MonoBehaviour
 {
 	[SerializeField]
-	WheeledVehicle ParentVehicle;
+	private WheeledVehicle ParentVehicle;
 
 	[SerializeField]
 	public bool Drivable = true;
+
 	[SerializeField]
 	public bool Steerable = true;
-	[SerializeField]
-	float Radius = 1f;
-	[SerializeField]
-	bool Grounded;
-	[SerializeField]
-	float GroundedThreshold;
-	[SerializeField]
-	AnimationCurve LatForceVsLatFricFactor;
 
-	RaycastHit lastHit;
-	Vector3 forceLateral;
+	[SerializeField]
+	private float Radius = 1f;
+
+	[SerializeField]
+	private bool Grounded;
+
+	[SerializeField]
+	private float GroundedThreshold;
+
+	[SerializeField]
+	private AnimationCurve LatForceVsLatFricFactor;
+
+	private RaycastHit lastHit;
+	private Vector3 forceLateral;
+	private int totalWheelCount;
 
 	// Use this for initialization
-	void Start()
+	private void Start()
 	{
 		ParentVehicle = GetComponentsInParent<WheeledVehicle>()[0]; //there will only be one
+		totalWheelCount = ParentVehicle.GetComponentsInChildren<VehicleWheel>().Length;
 	}
 
 	// Update is called once per frame
-	void Update()
+	private void Update()
 	{
 		Grounded = false;
 
@@ -50,11 +56,11 @@ public class VehicleWheel : MonoBehaviour
 			//	latFrictionFactor = FrictionLateral_Drift;
 			//}
 
-			ParentVehicle.rb.AddForceAtPosition(-forceLateral * 0.25f, transform.position, ForceMode.VelocityChange);          //Change 0.25f when changing weight transfer
+			ParentVehicle.rb.AddForceAtPosition(-forceLateral / totalWheelCount, transform.position, ForceMode.VelocityChange);          //Change 0.25f when changing weight transfer
 		}
 	}
 
-	void OnDrawGizmos()
+	private void OnDrawGizmos()
 	{
 		if (Grounded)
 		{
