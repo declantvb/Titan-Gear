@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
-public abstract class WheeledVehicle : MonoBehaviour
+public class WheeledVehicle : MonoBehaviour
 {
 	[Header("Ground Movement")]
 	[SerializeField]
@@ -20,6 +21,9 @@ public abstract class WheeledVehicle : MonoBehaviour
 	public bool UseDownforce = true;
 	[SerializeField]
 	public Transform CenterOfMass;
+	
+	public Func<float> GetSteering;
+	public Func<float> GetThrottle;
 
 	public Rigidbody rb;
 
@@ -27,14 +31,14 @@ public abstract class WheeledVehicle : MonoBehaviour
 	List<VehicleWheel> wheels;
 
 	// Use this for initialization
-	public virtual void Start()
+	public void Start()
 	{
 		rb = GetComponentInParent<Rigidbody>();
 		wheels = GetComponentsInChildren<VehicleWheel>().ToList();
 	}
 
 	// Update is called once per frame
-	public virtual void Update()
+	public void Update()
 	{
 		float throttle = GetThrottle();
 		float steering = GetSteering();
@@ -149,8 +153,4 @@ public abstract class WheeledVehicle : MonoBehaviour
 			wheel.transform.localEulerAngles = new Vector3(0, angle, 0);
 		}
 	}
-
-	public abstract float GetSteering();
-
-	public abstract float GetThrottle();
 }

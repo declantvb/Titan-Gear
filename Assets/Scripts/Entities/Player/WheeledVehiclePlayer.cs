@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
-public class WheeledVehiclePlayer : WheeledVehicle
+public class WheeledVehiclePlayer : MonoBehaviour
 {
-	public override float GetSteering()
-	{
-		return Input.GetAxis("Horizontal");
-	}
+	private WheeledVehicle vehicle;
 
-	public override float GetThrottle()
+	public void Start()
 	{
-		return Input.GetAxis("Vertical");
+		vehicle = GetComponent<WheeledVehicle>();
+
+		vehicle.GetSteering = () => Input.GetAxis("Horizontal");
+		vehicle.GetThrottle = () => Input.GetAxis("Vertical");
 	}
 }

@@ -19,7 +19,6 @@ public class Projectile : Bullet
 			{
 				var dist = (transform.position - enemy.transform.position).magnitude;
 				var effect = 1 - (dist / BlastRadius);
-				print(effect);
 				enemy.YaGotShot(Mathf.Max(0, effect) * DamageModifier);
 			}
 		}

@@ -6,30 +6,32 @@ public class HardpointManager : MonoBehaviour
 {
 	[Header("Prefabs")]
 	public GameObject[] MobilityParts;
+
 	public GameObject[] TurretParts;
 	public GameObject[] WeaponParts;
 
 	[Header("Current")]
 	public PartSlot MobilitySlot;
+
 	public PartSlot TurretSlot;
-	public GameObject WeaponPrefab { get { return WeaponParts[CurrentWeaponPart]; } }
 	public List<PartSlot> WeaponSlots;
 
-	[SerializeField]
-	private bool showGUI;
-
-	private int CurrentWeaponPart = 0;
 	private int CurrentMobilityPart = 0;
 	private int CurrentTurretPart = 0;
 
 	[SerializeField]
 	private WeaponSystem weaponSystem;
+
 	[SerializeField]
 	private EquipmentSystem equip;
+
+	private bool isPlayer;
 
 	// Use this for initialization
 	private void Start()
 	{
+		isPlayer = GetComponent<Player>() != null;
+
 		var partSlots = GetComponentsInChildren<PartSlot>();
 		foreach (var slot in partSlots)
 		{
@@ -47,10 +49,17 @@ public class HardpointManager : MonoBehaviour
 					throw new System.Exception("invalid SlotType");
 			}
 		}
-		equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
+
+		if (isPlayer)
+		{
+			equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
+		}
 
 		ChangeMobility(MobilityParts[CurrentMobilityPart]);
 		ChangeTurret(TurretParts[CurrentTurretPart]);
+
+		//debugging
+		ChangeWeapon(WeaponSlots[0], WeaponParts[0]);
 	}
 
 	// Update is called once per frame
@@ -65,15 +74,45 @@ public class HardpointManager : MonoBehaviour
 		var newTurret = TurretSlot.currentPartInstance;
 		weaponSystem = newTurret.GetComponentInChildren<WeaponSystem>();
 
+		if (isPlayer)
+		{
+			// child camera
+			var holder = TurretSlot.currentPartInstance.transform.GetComponentInChildren<CameraHolder>().transform;
+			var mainCamera = Camera.main.transform;
+			mainCamera.SetParent(holder);
+			mainCamera.localPosition = Vector3.zero;
+			mainCamera.localRotation = Quaternion.identity;
+
+			// set weapon controller
+			TurretSlot.GetComponentInChildren<WeaponSystem>().gameObject.AddComponent<WeaponSystemPlayer>();
+
+			// update inventory
+			equip.SetMainSlots(MobilitySlot, TurretSlot);
+		}
+		else
+		{
+			TurretSlot.GetComponentInChildren<WeaponSystem>().gameObject.AddComponent<WeaponSystemAI>();
+		}
+
 		// check for new hardpoints
 		UpdateHardpoints(newTurret);
-		equip.SetMainSlots(MobilitySlot, TurretSlot);
 	}
 
 	public void ChangeMobility(GameObject prefab)
 	{
 		MobilitySlot.ChangePart(prefab);
-		equip.SetMainSlots(MobilitySlot, TurretSlot);
+		//TODO generically add player controller to mobility
+		// static for now
+		if (isPlayer)
+		{
+			MobilitySlot.GetComponentInChildren<WheeledVehicle>().gameObject.AddComponent<WheeledVehiclePlayer>();
+
+			equip.SetMainSlots(MobilitySlot, TurretSlot);
+		}
+		else
+		{
+			MobilitySlot.GetComponentInChildren<WheeledVehicle>().gameObject.AddComponent<WheeledVehicleAI>();
+		}
 	}
 
 	public void ChangeWeapon(PartSlot slot, GameObject prefab)
@@ -90,13 +129,16 @@ public class HardpointManager : MonoBehaviour
 		// diff and update
 		WeaponSlots = weaponHardpoints.ToList();
 
-		//TODO fix
-		if (equip == null)
+		if (isPlayer)
 		{
-			equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
-		}
+			//TODO fix
+			if (equip == null)
+			{
+				equip = GetComponent<PlayerInventory>().characterSystem.GetComponent<EquipmentSystem>();
+			}
 
-		//update inventory
-		equip.SetWeaponSlots(WeaponSlots);
+			//update inventory
+			equip.SetWeaponSlots(WeaponSlots);
+		}
 	}
 }

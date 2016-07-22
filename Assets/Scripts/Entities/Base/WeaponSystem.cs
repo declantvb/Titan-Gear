@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class WeaponSystem : MonoBehaviour
+public class WeaponSystem : MonoBehaviour
 {
 	private Transform player;
 
@@ -15,38 +16,26 @@ public abstract class WeaponSystem : MonoBehaviour
 		player = transform.root;
 	}
 
-	// Update is called once per frame
-	private void FixedUpdate()
-	{
-		HandleLook();
-
-		HandleFiring();
-	}
-
-	private void HandleFiring()
+	public void FireWeapon()
 	{
 		var playerVelocity = player.GetComponent<Rigidbody>().velocity;
-
-		if (FireWeapon())
+		bool updateWeapons = false;
+		foreach (var weapon in ActiveWeapons)
 		{
-			bool updateWeapons = false;
-			foreach (var weapon in ActiveWeapons)
+			if (weapon != null)
 			{
-				if (weapon != null)
-				{
-					weapon.Fire(playerVelocity);
-				}
-				else
-				{
-					updateWeapons = true;
-				}
+				weapon.Fire(playerVelocity);
 			}
+			else
+			{
+				updateWeapons = true;
+			}
+		}
 
-			//TODO
-			if (ActiveWeapons.Count == 0 || updateWeapons)
-			{
-				UpdateActiveWeapons();
-			}
+		//TODO
+		if (ActiveWeapons.Count == 0 || updateWeapons)
+		{
+			UpdateActiveWeapons();
 		}
 	}
 
@@ -54,10 +43,4 @@ public abstract class WeaponSystem : MonoBehaviour
 	{
 		ActiveWeapons = GetComponentsInChildren<Weapon>().ToList();
 	}
-
-	public abstract void HandleLook();
-
-	public abstract bool FireWeapon();
-
-	public abstract bool SwitchWeapon();
 }

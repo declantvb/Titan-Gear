@@ -1,30 +1,42 @@
 ﻿using UnityEngine;
 
-public class WheeledVehicleAI : WheeledVehicle
+public class WheeledVehicleAI : MonoBehaviour
 {
+	public Vector3 CurrentMoveTarget;
+
 	[SerializeField]
 	private float currentSteering = 0f;
 
 	[SerializeField]
 	private float currentThrottle = 0f;
 
-	[Header("AI stuff")]
-	public Vector3 CurrentMoveTarget;
-
-	public float StopThreshold;
+	[SerializeField]
+	private float StopThreshold = 10f;
 
 	[SerializeField]
 	private float changedcooldown;
+
+	[SerializeField]
 	private bool reversing;
 
-	public override void Update()
+	private WheeledVehicle vehicle;
+
+	public void Start()
+	{
+		vehicle = GetComponent<WheeledVehicle>();
+
+		vehicle.GetSteering = () => currentSteering;
+		vehicle.GetThrottle = () => currentThrottle;
+	}
+
+	public void Update()
 	{
 		var currentDir = transform.forward;
 		var targetDiff = CurrentMoveTarget - transform.position;
 		var targetDir = targetDiff.normalized;
-		var moveDir = Vector3.RotateTowards(currentDir, targetDir, MaxSteeringAngle * Mathf.Deg2Rad, 1);
+		var moveDir = Vector3.RotateTowards(currentDir, targetDir, vehicle.MaxSteeringAngle * Mathf.Deg2Rad, 1);
 		var direction = Mathf.Sign(Vector3.Dot(Vector3.Cross(currentDir, targetDir), transform.up));
-		currentSteering = Vector3.Angle(currentDir, moveDir) / MaxSteeringAngle * direction;
+		currentSteering = Vector3.Angle(currentDir, moveDir) / vehicle.MaxSteeringAngle * direction;
 
 		var dist = targetDiff.magnitude;
 		if (dist > StopThreshold)
@@ -40,7 +52,7 @@ public class WheeledVehicleAI : WheeledVehicle
 					reversing = needToReverse;
 					changedcooldown = 0.2f;
 				}
-				changedcooldown -= Time.deltaTime; 
+				changedcooldown -= Time.deltaTime;
 			}
 
 			if (reversing)
@@ -54,17 +66,5 @@ public class WheeledVehicleAI : WheeledVehicle
 			currentThrottle = 0f;
 			changedcooldown = 0f;
 		}
-
-		base.Update();
-	}
-
-	public override float GetSteering()
-	{
-		return currentSteering;
-	}
-
-	public override float GetThrottle()
-	{
-		return currentThrottle;
 	}
 }

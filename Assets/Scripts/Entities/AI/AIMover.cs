@@ -15,7 +15,7 @@ public class AIMover : MonoBehaviour
 	// Use this for initialization
 	private void Start()
 	{
-		vehicle = GetComponent<WheeledVehicleAI>();
+		vehicle = GetComponentInChildren<WheeledVehicleAI>();
 		weapons = GetComponentInChildren<WeaponSystemAI>();
 	}
 
