@@ -77,21 +77,21 @@ public class HardpointManager : MonoBehaviour
 		if (isPlayer)
 		{
 			// child camera
-			var holder = TurretSlot.currentPartInstance.transform.GetComponentInChildren<CameraHolder>().transform;
+			var holder = newTurret.transform.GetComponentInChildren<CameraHolder>().transform;
 			var mainCamera = Camera.main.transform;
 			mainCamera.SetParent(holder);
 			mainCamera.localPosition = Vector3.zero;
 			mainCamera.localRotation = Quaternion.identity;
 
 			// set weapon controller
-			TurretSlot.GetComponentInChildren<WeaponSystem>().gameObject.AddComponent<WeaponSystemPlayer>();
+			weaponSystem.gameObject.AddComponent<WeaponSystemPlayer>();
 
 			// update inventory
 			equip.SetMainSlots(MobilitySlot, TurretSlot);
 		}
 		else
 		{
-			TurretSlot.GetComponentInChildren<WeaponSystem>().gameObject.AddComponent<WeaponSystemAI>();
+			weaponSystem.gameObject.AddComponent<WeaponSystemAI>();
 		}
 
 		// check for new hardpoints
@@ -101,17 +101,19 @@ public class HardpointManager : MonoBehaviour
 	public void ChangeMobility(GameObject prefab)
 	{
 		MobilitySlot.ChangePart(prefab);
+		var wheeledVehicle = MobilitySlot.currentPartInstance.GetComponentInChildren<WheeledVehicle>();
+
 		//TODO generically add player controller to mobility
 		// static for now
 		if (isPlayer)
 		{
-			MobilitySlot.GetComponentInChildren<WheeledVehicle>().gameObject.AddComponent<WheeledVehiclePlayer>();
+			wheeledVehicle.gameObject.AddComponent<WheeledVehiclePlayer>();
 
 			equip.SetMainSlots(MobilitySlot, TurretSlot);
 		}
 		else
 		{
-			MobilitySlot.GetComponentInChildren<WheeledVehicle>().gameObject.AddComponent<WheeledVehicleAI>();
+			wheeledVehicle.gameObject.AddComponent<WheeledVehicleAI>();
 		}
 	}
 
