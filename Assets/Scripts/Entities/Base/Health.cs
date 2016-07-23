@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Health : MonoBehaviour
 	public int healthbarHeight = 24;
 	public int healthbarWidth = 70;
 	public int screenspaceOffsetHeight = 50;
+
+	public GameObject HealthSlider;
 
 	private GUIStyle HealthBarBackground;
 	private GUIStyle HealthBarForeground;
@@ -58,6 +61,11 @@ public class Health : MonoBehaviour
 			{
 				enemy.Die();
 			}
+		}
+
+		if (HealthSlider != null)
+		{
+			HealthSlider.GetComponent<Slider>().value = CurrentHealth / MaxHealth;
 		}
 	}
 
