@@ -170,11 +170,10 @@ public class WheeledVehicle : MonoBehaviour
 		// All this crazy math is to implement Ackermann steering to make sure both steering wheels are pointing along their respective turning circles
 
 		float rearSteeringFactor = Vector3.Dot(transform.forward, furthestAxle.centre - transform.position) > 0 ? 1 : -1;
+		
+		var speedSteeringFactor = (maxSteeringAngle / (((speed / 100) * speedSensitiveSteering) + 1));
 
-		//float steering = (maxSteeringAngle / (((speed / 100) * speedSensitiveSteering) + 1)) * inputs.xAxis;
-		var speedSteeringFactor = (1 / (speed / 100 + 1));
-
-		innerWheel.steering = steering * maxSteeringAngle * /*speedSteeringFactor **/ rearSteeringFactor;
+		innerWheel.steering = steering * speedSteeringFactor * rearSteeringFactor;
 
 		Vector3 intersection;
 
