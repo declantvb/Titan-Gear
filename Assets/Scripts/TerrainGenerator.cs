@@ -159,8 +159,8 @@ public class TerrainGenerator : MonoBehaviour
 
 	private float MakeTerrainNoise(float u, float v)
 	{
-		//return (float)NoiseMaker.eval(u, v) / 2 + 0.5f;
-		return 0;
+		return (float)NoiseMaker.eval(u, v) / 2 + 0.5f;
+		//return 0;
 	}
 
 	private float[,] GenerateHeightmap(int worldu, int worldv, int size)

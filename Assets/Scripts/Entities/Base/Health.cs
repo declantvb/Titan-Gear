@@ -94,6 +94,7 @@ public class Health : MonoBehaviour
 
 				var hbPos = new Vector2(pos.x - healthbarWidth / 2, screenHeight - pos.y - screenspaceOffsetHeight);
 				var hbSize = new Vector2(healthbarWidth, healthbarHeight);
+				GUI.depth = 0;
 				GUI.Label(new Rect(hbPos.x, hbPos.y - healthBarTextHeight, hbSize.x, healthBarTextHeight), name);
 				GUI.BeginGroup(new Rect(hbPos.x, hbPos.y, hbSize.x, hbSize.y));
 				GUI.Box(new Rect(0, 0, hbSize.x, hbSize.y), "", HealthBarBackground);

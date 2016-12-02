@@ -34,9 +34,9 @@ public class WheeledVehicleAI : MonoBehaviour
 		var currentDir = transform.forward;
 		var targetDiff = CurrentMoveTarget - transform.position;
 		var targetDir = targetDiff.normalized;
-		var moveDir = Vector3.RotateTowards(currentDir, targetDir, vehicle.MaxSteeringAngle * Mathf.Deg2Rad, 1);
+		var moveDir = Vector3.RotateTowards(currentDir, targetDir, vehicle.maxSteeringAngle * Mathf.Deg2Rad, 1);
 		var direction = Mathf.Sign(Vector3.Dot(Vector3.Cross(currentDir, targetDir), transform.up));
-		currentSteering = Vector3.Angle(currentDir, moveDir) / vehicle.MaxSteeringAngle * direction;
+		currentSteering = Vector3.Angle(currentDir, moveDir) / vehicle.maxSteeringAngle * direction;
 
 		var dist = targetDiff.magnitude;
 		if (dist > StopThreshold)
