@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour
 	public WeaponDescriptor WeaponDescriptor;
 
 	[SerializeField]
-	private float cooldown = 0f;
+	public float cooldown = 0f;
 
 	private Transform _bulletStartPoint;
 

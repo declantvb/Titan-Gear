@@ -8,7 +8,7 @@ public class PartSlot : MonoBehaviour
 	public GameObject currentPartPrefab;
 	public GameObject currentPartInstance;
 
-	void Start()
+	private void Start()
 	{
 		ChangePart(currentPartPrefab);
 	}
@@ -16,8 +16,11 @@ public class PartSlot : MonoBehaviour
 	public void ChangePart(GameObject newPart)
 	{
 		//need to copy over some things?
-
-		Destroy(currentPartInstance);
+		if (currentPartInstance != null)
+		{
+			currentPartInstance.transform.parent = null;
+			Destroy(currentPartInstance);
+		}
 
 		if (newPart != null)
 		{

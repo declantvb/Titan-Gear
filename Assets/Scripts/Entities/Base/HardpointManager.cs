@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -26,6 +27,9 @@ public class HardpointManager : MonoBehaviour
 	private EquipmentSystem equip;
 
 	private bool isPlayer;
+
+	public Action UpdateHud;
+	private bool needGuiUpdate;
 
 	// Use this for initialization
 	private void Start()
@@ -62,9 +66,13 @@ public class HardpointManager : MonoBehaviour
 		ChangeWeapon(WeaponSlots[0], WeaponParts[0]);
 	}
 
-	// Update is called once per frame
-	private void Update()
+	private void OnGUI()
 	{
+		if (needGuiUpdate)
+		{
+			if (UpdateHud != null) UpdateHud();
+			needGuiUpdate = false;
+		}
 	}
 
 	public void ChangeTurret(GameObject prefab)
@@ -88,6 +96,8 @@ public class HardpointManager : MonoBehaviour
 
 			// update inventory
 			equip.SetMainSlots(MobilitySlot, TurretSlot);
+
+			needGuiUpdate = true;
 		}
 		else
 		{
@@ -110,6 +120,8 @@ public class HardpointManager : MonoBehaviour
 			wheeledVehicle.gameObject.AddComponent<WheeledVehiclePlayer>();
 
 			equip.SetMainSlots(MobilitySlot, TurretSlot);
+
+			needGuiUpdate = true;
 		}
 		else
 		{
@@ -121,6 +133,8 @@ public class HardpointManager : MonoBehaviour
 	{
 		slot.ChangePart(prefab);
 		weaponSystem.UpdateActiveWeapons();
+
+		needGuiUpdate = true;
 	}
 
 	private void UpdateHardpoints(GameObject turret)
