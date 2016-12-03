@@ -20,7 +20,6 @@ public class Powerplant
 
 	public float FuelUsageFromPower(FuelData fuel, float power)
 	{
-		var partHoursPerFrame = Time.deltaTime / 3600;
-		return power / fuel.EnergyDensity / Efficiency * partHoursPerFrame;
+		return power / fuel.EnergyDensity / Efficiency * TimeExtensions.deltaTimeHours;
 	}
 }

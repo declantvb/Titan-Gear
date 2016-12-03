@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PowerSystem : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class PowerSystem : MonoBehaviour
 	public Powerplant Powerplant;
 
 	public BatteryBank BatteryBank;
+	
+	public GameObject FuelSlider;
+	public GameObject BatterySlider;
 
 	public float draw;
 	public float charge;
@@ -65,5 +69,15 @@ public class PowerSystem : MonoBehaviour
 		}
 
 		FuelTank.Consume(Powerplant.FuelUsageFromPower(FuelTank.Fuel, powerUsed));
+
+		if (FuelSlider != null)
+		{
+			FuelSlider.GetComponent<Slider>().value = FuelTank.Stored / FuelTank.Capacity;
+		}
+
+		if (BatterySlider != null)
+		{
+			BatterySlider.GetComponent<Slider>().value = BatteryBank.Stored / BatteryBank.Capacity;
+		}
 	}
 }

@@ -14,6 +14,9 @@ public class WeaponDescriptor
 	public float Duration;
 	public float Damage;
 	public float Radius;
+
+	//In kWh, as a proxy for joules
+	public float PowerDrawPerShot;
 }
 
 public enum WeaponStyle

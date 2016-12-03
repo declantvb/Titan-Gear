@@ -2,18 +2,32 @@
 using System;
 
 [Serializable]
-public class Capacitor
+public class Capacitor : MonoBehaviour, IPowerConsumer
 {
-	public float Capacity { get; private set; }
+	public float Capacity;
 
-	public float Demand { get; private set; }
+	public float Stored;
 
-	public float Stored { get; private set; }
+	public float MaxChargeOrDraw;
 
-	public Capacitor(float capacity)
+	public Capacitor(float capacity, float maxChargeOrDraw)
 	{
 		Capacity = capacity;
-		Demand = 0;
+		MaxChargeOrDraw = maxChargeOrDraw;
 		Stored = 0;
+	}
+
+	public float GetPowerDemand()
+	{
+		return Stored < Capacity ? MaxChargeOrDraw * TimeExtensions.deltaTimeHours : 0;
+	}
+
+	public void SupplyPower(float satisfaction)
+	{
+		Stored += MaxChargeOrDraw * TimeExtensions.deltaTimeHours * satisfaction;
+		if (Stored > Capacity)
+		{
+			Stored = Capacity;
+		}
 	}
 }
