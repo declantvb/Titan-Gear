@@ -10,13 +10,16 @@ public class BatteryBank
 	[Tooltip("Number of batteries in the bank")]
 	public int BatteryCount;
 
-	[Tooltip("Maximum draw in W")]
+	[Tooltip("Maximum draw in kW")]
 	public float PowerDensity;
 
-	[Tooltip("Current units of power stored")]
+	public float MaxDraw { get { return Stored > 0 ? PowerDensity : 0; } }
+	public float MaxCharge { get { return Stored < Capacity ? PowerDensity : 0; } }
+
+	[Tooltip("Current units of power stored in kWh")]
 	public float Stored;
 
-	[Tooltip("Maximum units of power stored")]
+	[Tooltip("Maximum units of power stored in kWh")]
 	public float Capacity;
 
 	public void ChangeBatteryType(BatteryData newType)
@@ -24,6 +27,18 @@ public class BatteryBank
 		Battery = newType;
 		PowerDensity = Battery.PowerDensity * BatteryCount;
 		Capacity = Battery.EnergyDensity * BatteryCount;
+	}
+
+	public void Draw(float power)
+	{
+		var partHoursPerFrame = Time.deltaTime / 3600;
+		Stored -= power * partHoursPerFrame;
+	}
+
+	public void Charge(float power)
+	{
+		var partHoursPerFrame = Time.deltaTime / 3600;
+		Stored += power * partHoursPerFrame;
 	}
 }
 

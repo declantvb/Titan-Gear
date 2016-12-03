@@ -8,38 +8,25 @@
 [System.Serializable]
 public class Motor
 {
-	// RPM
-	[Tooltip("Maximum RPM motor is allowed to have.")]
 	public float maxRpm = 4200;
-
-	//[HideInInspector]
+	
 	public float currentRpm;
-
-	[Tooltip("Minimum RPM motor is allowed to have.")]
-	public float minRpm = 0;
-
-	//[HideInInspector]
+	
 	public float load; //0...1
 
-	[Tooltip("Array of different power values in kW at steps of 1000rpm. Torque curve is generated from this. Change step in getPowerAtRpm function for smaller or bigger steps.")]
-	public float[] powerArray = new float[7] { 0, 30, 60, 80, 95, 105, 100 }; //represents power(kW) at steps of 1k rpm
+	public float breakRPM = 6000f;
+
+	public float maxPower = 100f;
+
+	public float CurrentPowerLevel;
 
 	public void Update(WheeledVehicle vehicle)
 	{
 		//motor can only directly communicate with transmission
 		currentRpm = Mathf.Abs(vehicle.transmission.toMotorRpm);
 
-		// rpm limiter
-		currentRpm = Mathf.Clamp(currentRpm, minRpm, maxRpm);
-
 		// Update torque based on motor rpm and power
-		vehicle.transmission.fromMotorTorque = getPowerAtRpm(powerArray, currentRpm) * 9549 / (currentRpm + 1); // torque(Nm) = 9549*Power(kW)/Speed(RPM)
-
-		// Rev control between shifts
-		if (vehicle.transmission.isShifting)
-		{
-			currentRpm = minRpm;
-		}
+		vehicle.transmission.fromMotorTorque = getPowerAtRpm(currentRpm) * 9549 / (currentRpm + 1) * CurrentPowerLevel; // torque(Nm) = 9549*Power(kW)/Speed(RPM)
 
 		// Calculate load based on input and speed feedback
 		float speedDiff = 0.2f - (vehicle.speed - vehicle.previousSpeed) * (1 - (currentRpm / maxRpm));
@@ -55,21 +42,25 @@ public class Motor
 			}
 		}
 
-		if (currentRpm > maxRpm)
-		{
-			currentRpm = maxRpm;
-		}
+		//if (currentRpm > maxRpm)
+		//{
+		//	currentRpm = maxRpm;
+		//}
+	}
+
+	public float GetCurrentPower()
+	{
+		return getPowerAtRpm(currentRpm);
 	}
 
 	// Interpolate between values based on powerArray as y and rpm as x axis
-	private float getPowerAtRpm(float[] powerArray, float rpm)
+	private float getPowerAtRpm(float rpm)
 	{
-		int selector;
-		int step = 1000;
-		float x_axis;
+		if (rpm < breakRPM)
+		{
+			return maxPower * rpm / breakRPM;
+		}
 
-		selector = (int)(Mathf.Floor(rpm / step));
-		x_axis = currentRpm % step;
-		return powerArray[selector] + ((x_axis / step) * powerArray[selector + 1]);
+		return maxPower;
 	}
 }

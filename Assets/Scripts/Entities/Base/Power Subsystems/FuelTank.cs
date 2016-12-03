@@ -12,6 +12,11 @@ public class FuelTank
 
 	[Tooltip("Maximum units of fuel stored")]
 	public float Capacity;
+
+	public void Consume(float amount)
+	{
+		Stored -= amount;
+	}
 }
 
 public class FuelData
@@ -20,7 +25,7 @@ public class FuelData
 
 	public FuelType FuelType { get; private set; }
 
-	//Power produced per unit fuel in Wh
+	//Power produced per unit fuel in kWh
 	public float EnergyDensity { get; private set; }
 
 	private FuelData(string name, FuelType type, float energyDensity)

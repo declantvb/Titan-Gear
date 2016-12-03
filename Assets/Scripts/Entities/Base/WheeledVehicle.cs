@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 // adapted from Off-road Vehicle Physics Kit https://www.assetstore.unity3d.com/en/#!/content/39946
-public class WheeledVehicle : MonoBehaviour
+public class WheeledVehicle : MonoBehaviour, IPowerConsumer
 {
 	// Objects
 	[Tooltip("List of axles and wheels a vehicle has. Up to 10 axles, 2 wheels each.")]
@@ -444,5 +444,15 @@ public class WheeledVehicle : MonoBehaviour
 			}
 		}
 		return motorAxleCount;
+	}
+
+	public float GetPowerDemand()
+	{
+		return motor.GetCurrentPower();
+	}
+
+	public void SupplyPower(float satisfaction)
+	{
+		motor.CurrentPowerLevel = satisfaction;
 	}
 }
