@@ -4,6 +4,8 @@ using System;
 [Serializable]
 public class Capacitor : MonoBehaviour, IPowerConsumer
 {
+	public ConsumerType ConsumerType;
+
 	public float Capacity;
 
 	public float Stored;
@@ -19,7 +21,7 @@ public class Capacitor : MonoBehaviour, IPowerConsumer
 
 	public float GetPowerDemand()
 	{
-		return Stored < Capacity ? MaxChargeOrDraw * TimeExtensions.deltaTimeHours : 0;
+		return Stored < Capacity ? MaxChargeOrDraw : 0;
 	}
 
 	public void SupplyPower(float satisfaction)
@@ -29,5 +31,10 @@ public class Capacitor : MonoBehaviour, IPowerConsumer
 		{
 			Stored = Capacity;
 		}
+	}
+
+	public ConsumerType GetConsumerType()
+	{
+		return ConsumerType;
 	}
 }

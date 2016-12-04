@@ -455,4 +455,9 @@ public class WheeledVehicle : MonoBehaviour, IPowerConsumer
 	{
 		motor.CurrentPowerLevel = satisfaction;
 	}
+
+	public ConsumerType GetConsumerType()
+	{
+		return ConsumerType.Mobility;
+	}
 }

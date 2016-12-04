@@ -26,7 +26,7 @@ public class Motor
 		currentRpm = Mathf.Abs(vehicle.transmission.toMotorRpm);
 
 		// Update torque based on motor rpm and power
-		vehicle.transmission.fromMotorTorque = getPowerAtRpm(currentRpm) * 9549 / (currentRpm + 1) * CurrentPowerLevel; // torque(Nm) = 9549*Power(kW)/Speed(RPM)
+		vehicle.transmission.fromMotorTorque = getPowerAtRpm(currentRpm) * 9549 / (currentRpm + 1); // torque(Nm) = 9549*Power(kW)/Speed(RPM)
 
 		// Calculate load based on input and speed feedback
 		float speedDiff = 0.2f - (vehicle.speed - vehicle.previousSpeed) * (1 - (currentRpm / maxRpm));
@@ -56,11 +56,14 @@ public class Motor
 	// Interpolate between values based on powerArray as y and rpm as x axis
 	private float getPowerAtRpm(float rpm)
 	{
-		if (rpm < breakRPM)
+		var modifiedBreakRPM = breakRPM / CurrentPowerLevel;
+		var modifiedMaxPower = maxPower * CurrentPowerLevel;
+
+		if (rpm < modifiedBreakRPM)
 		{
-			return maxPower * rpm / breakRPM;
+			return modifiedMaxPower * rpm / modifiedBreakRPM;
 		}
 
-		return maxPower;
+		return modifiedMaxPower;
 	}
 }
