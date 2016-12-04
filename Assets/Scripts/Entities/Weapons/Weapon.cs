@@ -44,9 +44,7 @@ public class Weapon : MonoBehaviour
 			return;
 		}
 
-		GameObject newBullet = Instantiate(WeaponDescriptor.ProjectilePrefab);
-		newBullet.transform.position = _bulletStartPoint.position;
-		newBullet.transform.rotation = _bulletStartPoint.rotation;
+		GameObject newBullet = Instantiate(WeaponDescriptor.ProjectilePrefab, _bulletStartPoint.position, _bulletStartPoint.rotation) as GameObject;
 
 		switch (WeaponDescriptor.Style)
 		{

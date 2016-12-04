@@ -10,7 +10,7 @@ public class Capacitor : MonoBehaviour, IPowerConsumer
 
 	public float Stored;
 
-	public float MaxChargeOrDraw;
+	public float MaxChargeOrDraw = 150f;
 
 	public Capacitor(float capacity, float maxChargeOrDraw)
 	{

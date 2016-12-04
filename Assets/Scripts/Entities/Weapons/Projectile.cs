@@ -7,17 +7,17 @@ public class Projectile : Bullet
 	public float DamageModifier = 50f;
 	public float BlastRadius = 2f;
 
-	public override void DoDamage(Collider other)
+	public override void Hit(Vector3 point, Collider other)
 	{
-		var explosion = (GameObject)Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-		var hits = Physics.OverlapSphere(transform.position, BlastRadius);
+		var explosion = (GameObject)Instantiate(ExplosionPrefab, point, Quaternion.identity);
+		var hits = Physics.OverlapSphere(point, BlastRadius);
 		var enemyHits = hits.Select(x => x.GetComponentInParent<Health>()).Distinct();
 
 		foreach (var enemy in enemyHits)
 		{
 			if (enemy != null)
 			{
-				var dist = (transform.position - enemy.transform.position).magnitude;
+				var dist = (point - enemy.transform.position).magnitude;
 				var effect = 1 - (dist / BlastRadius);
 				enemy.YaGotShot(Mathf.Max(0, effect) * DamageModifier);
 			}
