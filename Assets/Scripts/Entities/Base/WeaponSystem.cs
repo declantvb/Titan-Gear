@@ -7,8 +7,7 @@ public class WeaponSystem : MonoBehaviour
 {
 	private Transform player;
 
-	[SerializeField]
-	private List<Weapon> ActiveWeapons = new List<Weapon>();
+	public List<Weapon> ActiveWeapons = new List<Weapon>();
 
 	// Use this for initialization
 	private void Start()
@@ -18,13 +17,13 @@ public class WeaponSystem : MonoBehaviour
 
 	public void FireWeapon()
 	{
-		var playerVelocity = player.GetComponent<Rigidbody>().velocity;
+		var rbVelocity = player.GetComponent<Rigidbody>().velocity;
 		bool updateWeapons = false;
 		foreach (var weapon in ActiveWeapons)
 		{
 			if (weapon != null)
 			{
-				weapon.Fire(playerVelocity);
+				weapon.Fire(rbVelocity);
 			}
 			else
 			{

@@ -18,7 +18,7 @@ public class Motor
 
 	public float maxPower = 100f;
 
-	public float CurrentPowerLevel;
+	public float CurrentPowerLevel = 1f;
 
 	public void Update(WheeledVehicle vehicle)
 	{

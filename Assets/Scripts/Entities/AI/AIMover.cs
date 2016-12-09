@@ -38,9 +38,10 @@ public class AIMover : MonoBehaviour
 
 			foreach (var collider in res)
 			{
-				if (collider.GetComponentInParent<Player>())
+				var player = collider.GetComponentInParent<Player>();
+				if (player != null)
 				{
-					CurrentTransformTarget = collider.transform;
+					CurrentTransformTarget = player.transform;
 					break;
 				}
 			}

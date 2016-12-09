@@ -8,15 +8,23 @@ public class EnemySpawner : MonoBehaviour
 
 	[SerializeField]
 	private GameObject enemyPrefab;
+
 	[SerializeField]
 	private List<GameObject> currentEnemies;
+
 	[SerializeField]
 	private GameObject terrainMaster;
+
+	private TerrainGenerator terrainGenerator;
 
 	// Use this for initialization
 	private void Start()
 	{
 		currentEnemies = new List<GameObject>();
+		if (terrainMaster != null)
+		{
+			terrainGenerator = terrainMaster.GetComponent<TerrainGenerator>();
+		}
 	}
 
 	// Update is called once per frame
@@ -26,7 +34,13 @@ public class EnemySpawner : MonoBehaviour
 		for (int i = 0; i < deficit; i++)
 		{
 			var newPos = Random.insideUnitCircle.ToFlatVector3() * 100;
-			var height = terrainMaster.GetComponent<TerrainGenerator>().GetHeightAt(newPos);
+
+			var height = 5f;
+			if (terrainGenerator != null)
+			{
+				height = terrainGenerator.GetHeightAt(newPos);
+			}
+
 			newPos.y = height;
 			var newEnemy = (GameObject)Instantiate(enemyPrefab, newPos, Quaternion.identity);
 			currentEnemies.Add(newEnemy);

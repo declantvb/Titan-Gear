@@ -11,6 +11,9 @@ public class WheeledVehicleAI : MonoBehaviour
 	private float currentThrottle = 0f;
 
 	[SerializeField]
+	private float currentBrake = 0f;
+
+	[SerializeField]
 	private float StopThreshold = 10f;
 
 	[SerializeField]
@@ -27,6 +30,7 @@ public class WheeledVehicleAI : MonoBehaviour
 
 		vehicle.GetSteering = () => currentSteering;
 		vehicle.GetThrottle = () => currentThrottle;
+		vehicle.GetBrake = () => currentBrake;
 	}
 
 	public void Update()
@@ -41,6 +45,7 @@ public class WheeledVehicleAI : MonoBehaviour
 		var dist = targetDiff.magnitude;
 		if (dist > StopThreshold)
 		{
+			currentBrake = 0f;
 			currentThrottle = 1f;
 
 			var needToReverse = Vector3.Dot(targetDir, currentDir) < 0;
@@ -64,6 +69,7 @@ public class WheeledVehicleAI : MonoBehaviour
 		else
 		{
 			currentThrottle = 0f;
+			currentBrake = 1f;
 			changedcooldown = 0f;
 		}
 	}

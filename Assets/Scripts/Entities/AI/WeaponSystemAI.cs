@@ -2,7 +2,7 @@
 
 public class WeaponSystemAI : MonoBehaviour
 {
-	public float rotationSpeed = 0.05f;
+	public float rotationSpeed = 10f;
 	public Transform Target;
 	public float FireDistance;
 	public bool ShootingEnabled;
@@ -10,13 +10,14 @@ public class WeaponSystemAI : MonoBehaviour
 	private WeaponSystem weapons;
 	private Transform turret;
 
-	void Start()
+	private void Start()
 	{
-		weapons = GetComponentInChildren<WeaponSystem>();
+		weapons = GetComponent<WeaponSystem>();
+		FireDistance = weapons.ActiveWeapons[0].WeaponDescriptor.InitialBulletVelocity;
 		turret = weapons.transform;
 	}
 
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
 		HandleLook();
 
@@ -32,14 +33,22 @@ public class WeaponSystemAI : MonoBehaviour
 		{
 			var targetPos = Target.position; //todo lead target
 
+			var current = turret.localEulerAngles;
+
 			var currentDir = turret.forward;
 			var targetDiff = targetPos - turret.position;
 			var targetDir = targetDiff.normalized;
-			var moveDir = Vector3.RotateTowards(currentDir, targetDir, rotationSpeed, 1);
-			var direction = Mathf.Sign(Vector3.Dot(Vector3.Cross(currentDir, targetDir), turret.up));
-			var angle = Vector3.Angle(currentDir, moveDir) * direction;
+			var cross = Vector3.Cross(currentDir, targetDir);
 
-			turret.localRotation = Quaternion.Euler(0, turret.localRotation.eulerAngles.y + angle, 0);
+			var yawDirection = Mathf.Sign(Vector3.Dot(cross, turret.up));
+			var yawAngle = Mathf.Clamp(cross.magnitude * yawDirection, -rotationSpeed, rotationSpeed);
+
+			var pitchDirection = Mathf.Sign(Vector3.Dot(cross, turret.right));
+			var pitchAngle = Mathf.Clamp(cross.magnitude * pitchDirection, -rotationSpeed, rotationSpeed);
+
+			turret.localEulerAngles = new Vector3(current.x + pitchAngle, current.y + yawAngle, 0);
+
+			//turret.localEulerAngles = new Vector3(0, current.y + angle, 0);
 		}
 	}
 }

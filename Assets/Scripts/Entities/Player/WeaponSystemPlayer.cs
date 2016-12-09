@@ -4,16 +4,17 @@ public class WeaponSystemPlayer : MonoBehaviour
 {
 	[SerializeField]
 	private bool MouseLook;
+
 	private WeaponSystem weapons;
 	private Transform turret;
 
-	void Start()
+	private void Start()
 	{
 		weapons = GetComponentInChildren<WeaponSystem>();
 		turret = weapons.transform;
 	}
 
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
 		HandleLook();
 
@@ -49,12 +50,7 @@ public class WeaponSystemPlayer : MonoBehaviour
 			var currentY = current.x; // rotation about x axis
 			var relativeY = currentY > 180 ? currentY - 360 : currentY; // make negatives negative
 
-			var clampedY = relativeY + mouseY;
-
-			if (clampedY > 90) clampedY = 90;
-			else if (clampedY < -90) clampedY = -90;
-
-			var update = new Vector3(clampedY, current.y + mouseX, 0);
+			var update = new Vector3(Mathf.Clamp(relativeY + mouseY, -90, 90), current.y + mouseX, 0);
 
 			turret.localEulerAngles = update;
 		}
