@@ -1,25 +1,29 @@
 fileFormatVersion: 2
-guid: 61b39cc5b08425840987ffd493d99133
-timeCreated: 1481185862
+guid: e557c3adb6f50f14eb52a3b35179ad29
+timeCreated: 1481317651
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: chassis
-    100002: //RootNode
-    100004: turret
-    100006: wheel
-    400000: chassis
-    400002: //RootNode
-    400004: turret
-    400006: wheel
+    100000: //RootNode
+    100002: Camera
+    100004: chassis
+    100006: Cube
+    100008: Lamp
+    100010: wheel
+    400000: //RootNode
+    400002: Camera
+    400004: chassis
+    400006: Cube
+    400008: Lamp
+    400010: wheel
     2300000: chassis
-    2300002: turret
+    2300002: Cube
     2300004: wheel
     3300000: chassis
-    3300002: turret
+    3300002: Cube
     3300004: wheel
-    4300000: turret
+    4300000: Cube
     4300002: wheel
     4300004: chassis
   materials:

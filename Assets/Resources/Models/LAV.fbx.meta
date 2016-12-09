@@ -1,26 +1,27 @@
 fileFormatVersion: 2
-guid: 4d68bc40cd69edf48a18369f9efc26a9
-timeCreated: 1481183006
+guid: 61b39cc5b08425840987ffd493d99133
+timeCreated: 1481185862
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Camera
-    100002: chassis
-    100004: Lamp
-    100006: //RootNode
-    100008: wheel
-    400000: Camera
-    400002: chassis
-    400004: Lamp
-    400006: //RootNode
-    400008: wheel
+    100000: chassis
+    100002: //RootNode
+    100004: turret
+    100006: wheel
+    400000: chassis
+    400002: //RootNode
+    400004: turret
+    400006: wheel
     2300000: chassis
-    2300002: wheel
+    2300002: turret
+    2300004: wheel
     3300000: chassis
-    3300002: wheel
-    4300000: wheel
-    4300002: chassis
+    3300002: turret
+    3300004: wheel
+    4300000: turret
+    4300002: wheel
+    4300004: chassis
   materials:
     importMaterials: 1
     materialName: 0

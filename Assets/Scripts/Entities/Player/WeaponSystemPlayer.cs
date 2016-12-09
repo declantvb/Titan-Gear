@@ -7,11 +7,13 @@ public class WeaponSystemPlayer : MonoBehaviour
 
 	private WeaponSystem weapons;
 	private Transform turret;
+	private Transform arms;
 
 	private void Start()
 	{
 		weapons = GetComponentInChildren<WeaponSystem>();
 		turret = weapons.transform;
+		arms = turret.Find("arms").transform;
 	}
 
 	private void FixedUpdate()
@@ -46,13 +48,14 @@ public class WeaponSystemPlayer : MonoBehaviour
 			var mouseX = Input.GetAxis("Mouse X");
 			var mouseY = -Input.GetAxis("Mouse Y"); //todo invert look option
 
-			var current = turret.localEulerAngles;
-			var currentY = current.x; // rotation about x axis
-			var relativeY = currentY > 180 ? currentY - 360 : currentY; // make negatives negative
+			var currentY = arms.localEulerAngles.x; // rotation about x axis
+			var relativeY = arms.localEulerAngles.x > 180 ? currentY - 360 : currentY; // make negatives negative
 
-			var update = new Vector3(Mathf.Clamp(relativeY + mouseY, -90, 90), current.y + mouseX, 0);
+			var pitch = new Vector3(Mathf.Clamp(relativeY + mouseY, -90, 90), 0, 0);
+			var yaw = new Vector3(0, turret.localEulerAngles.y + mouseX, 0);
 
-			turret.localEulerAngles = update;
+			turret.localEulerAngles = yaw;
+			arms.localEulerAngles = pitch;
 		}
 	}
 }

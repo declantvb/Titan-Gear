@@ -9,12 +9,14 @@ public class WeaponSystemAI : MonoBehaviour
 
 	private WeaponSystem weapons;
 	private Transform turret;
+	private Transform arms;
 
 	private void Start()
 	{
 		weapons = GetComponent<WeaponSystem>();
 		FireDistance = weapons.ActiveWeapons[0].WeaponDescriptor.InitialBulletVelocity;
 		turret = weapons.transform;
+		arms = turret.Find("arms").transform;
 	}
 
 	private void FixedUpdate()
@@ -33,9 +35,7 @@ public class WeaponSystemAI : MonoBehaviour
 		{
 			var targetPos = Target.position; //todo lead target
 
-			var current = turret.localEulerAngles;
-
-			var currentDir = turret.forward;
+			var currentDir = arms.forward;
 			var targetDiff = targetPos - turret.position;
 			var targetDir = targetDiff.normalized;
 			var cross = Vector3.Cross(currentDir, targetDir);
@@ -46,9 +46,8 @@ public class WeaponSystemAI : MonoBehaviour
 			var pitchDirection = Mathf.Sign(Vector3.Dot(cross, turret.right));
 			var pitchAngle = Mathf.Clamp(cross.magnitude * pitchDirection, -rotationSpeed, rotationSpeed);
 
-			turret.localEulerAngles = new Vector3(current.x + pitchAngle, current.y + yawAngle, 0);
-
-			//turret.localEulerAngles = new Vector3(0, current.y + angle, 0);
+			turret.localEulerAngles = new Vector3(0, turret.localEulerAngles.y + yawAngle, 0);
+			arms.localEulerAngles = new Vector3(arms.localEulerAngles.x + pitchAngle, 0, 0);
 		}
 	}
 }
