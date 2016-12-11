@@ -29,30 +29,15 @@ public class HudManager : MonoBehaviour
 	{
 		weaponsPanel.UpdateWeapons(player);
 		speedometer.UpdateWith(player);
-
-		UpdateHealth();
-		UpdateArmor();
-		UpdateShields();
-
-		UpdatePowerSystem();
 	}
 
-	private void UpdatePowerSystem()
-	{
-		FuelBar.GetComponent<Slider>().value = playerPower.FuelTank.Stored / playerPower.FuelTank.Capacity;
-		BatteryBar.GetComponent<Slider>().value = playerPower.BatteryBank.Stored / playerPower.BatteryBank.Capacity;
-	}
-
-	private void UpdateShields()
-	{
-	}
-
-	private void UpdateArmor()
-	{
-	}
-
-	private void UpdateHealth()
+	public void Update()
 	{
 		HealthBar.value = playerHealth.CurrentHealth / playerHealth.MaxHealth;
+		ArmorBar.value = playerHealth.CurrentArmor / playerHealth.MaxArmor;
+		ShieldBar.value = playerHealth.CurrentShields / playerHealth.MaxShields;
+
+		FuelBar.GetComponent<Slider>().value = playerPower.FuelTank.Stored / playerPower.FuelTank.Capacity;
+		BatteryBar.GetComponent<Slider>().value = playerPower.BatteryBank.Stored / playerPower.BatteryBank.Capacity;
 	}
 }

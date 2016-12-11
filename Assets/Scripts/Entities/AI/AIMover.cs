@@ -11,17 +11,28 @@ public class AIMover : MonoBehaviour
 	public float OffsetDistance;
 	public float WanderDistance;
 	public bool CanShoot;
+	private bool init;
 
 	// Use this for initialization
 	private void Start()
 	{
-		vehicle = GetComponentInChildren<WheeledVehicleAI>();
-		weapons = GetComponentInChildren<WeaponSystemAI>();
 	}
 
 	// Update is called once per frame
 	private void Update()
 	{
+		if (!init)
+		{
+			vehicle = GetComponentInChildren<WheeledVehicleAI>();
+			weapons = GetComponentInChildren<WeaponSystemAI>();
+
+			if (vehicle != null && weapons != null)
+			{
+				init = true;
+			}
+			return;
+		}
+
 		GetTarget();
 
 		HandleMovement();

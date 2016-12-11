@@ -1,18 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
+	public float shieldHitRechargeTime = 5f;
 	public float MaxHealth;
 	public float CurrentHealth;
+
+	public float MaxArmor;
+	public float CurrentArmor;
+
+	public float MaxShields;
+	public float CurrentShields;
 
 	[Header("Healthbar Display")]
 	public bool DisplayInWorld = true;
 
 	public float healthbarWorldOffset = 3f;
 	public int healthBarTextHeight = 20;
-	public int healthbarHeight = 24;
+	public int healthbarHeight = 18;
 	public int healthbarWidth = 70;
 	public int screenspaceOffsetHeight = 50;
 
@@ -21,10 +27,13 @@ public class Health : MonoBehaviour
 	private Player player;
 	private Enemy enemy;
 
+	public float ShieldRechargeCounter { get; private set; }
+
 	// Use this for initialization
 	private void Start()
 	{
 		CurrentHealth = MaxHealth;
+		CurrentArmor = MaxArmor;
 
 		var redTex = new Texture2D(1, 1);
 		redTex.SetPixel(0, 0, Color.red);
@@ -60,6 +69,15 @@ public class Health : MonoBehaviour
 				enemy.Die();
 			}
 		}
+
+		if (ShieldRechargeCounter > 0)
+		{
+			ShieldRechargeCounter -= Time.deltaTime;
+		}
+		else if (CurrentShields < MaxShields)
+		{
+			CurrentShields += Mathf.Min(MaxShields - CurrentShields, 10f * Time.deltaTime);
+		}
 	}
 
 	public void OnGUI()
@@ -77,10 +95,6 @@ public class Health : MonoBehaviour
 				if (enemy != null)
 				{
 					name = enemy.Name;
-				}
-				else if (player != null)
-				{
-					name = player.Name;
 				}
 
 				var healthPercent = CurrentHealth / MaxHealth;
@@ -101,6 +115,25 @@ public class Health : MonoBehaviour
 
 	internal void YaGotShot(float damage)
 	{
-		CurrentHealth -= damage;
+		if (CurrentShields > 0)
+		{
+			var hit = Mathf.Min(CurrentShields, damage);
+
+			damage -= hit;
+
+			CurrentShields -= hit;
+			ShieldRechargeCounter = shieldHitRechargeTime;
+		}
+
+		var percentArmor = 0f;
+
+		if (MaxArmor > 0)
+		{
+			percentArmor = CurrentArmor / MaxArmor; 
+		}
+
+		CurrentArmor -= damage * percentArmor;
+
+		CurrentHealth -= damage * (1 - percentArmor);
 	}
 }
