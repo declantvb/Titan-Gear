@@ -22,8 +22,6 @@ public class WeaponDescriptor
 public enum WeaponStyle
 {
 	Projectile,
-	ProjectileStraight,
-	Pulse,
-	Hitscan,
-	Laser
+	Laser,
+	Missile
 }

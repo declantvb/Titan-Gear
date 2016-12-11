@@ -27,7 +27,7 @@ public class Weapon : MonoBehaviour
 		}
 	}
 
-	public void Fire(Vector3 playerVelocity)
+	public void Fire(Vector3 playerVelocity, Transform missileLock)
 	{
 		if (cooldown > 0f)
 		{
@@ -49,13 +49,20 @@ public class Weapon : MonoBehaviour
 		switch (WeaponDescriptor.Style)
 		{
 			case WeaponStyle.Projectile:
-			case WeaponStyle.ProjectileStraight:
-			case WeaponStyle.Pulse:
 				newBullet.SetLayerRecursively(LayerMask.NameToLayer("Bullets"));
 				newBullet.GetComponent<Rigidbody>().AddForce((_bulletStartPoint.forward * WeaponDescriptor.InitialBulletVelocity) + playerVelocity, ForceMode.VelocityChange);
 				var projectile = newBullet.GetComponent<Projectile>();
 				projectile.DamageModifier = WeaponDescriptor.Damage;
 				projectile.BlastRadius = WeaponDescriptor.Radius;
+				break;
+
+			case WeaponStyle.Missile:
+				newBullet.SetLayerRecursively(LayerMask.NameToLayer("Bullets"));
+				newBullet.GetComponent<Rigidbody>().AddForce((_bulletStartPoint.forward * WeaponDescriptor.InitialBulletVelocity) + playerVelocity, ForceMode.VelocityChange);
+				var missile = newBullet.GetComponent<Missile>();
+				missile.DamageModifier = WeaponDescriptor.Damage;
+				missile.BlastRadius = WeaponDescriptor.Radius;
+				missile.Target = missileLock;
 				break;
 
 			case WeaponStyle.Laser:
@@ -65,7 +72,6 @@ public class Weapon : MonoBehaviour
 				laser.DamagePerSecond = WeaponDescriptor.Damage;
 				break;
 
-			case WeaponStyle.Hitscan:
 			default:
 				break;
 		}

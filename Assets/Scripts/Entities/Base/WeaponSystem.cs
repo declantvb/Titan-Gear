@@ -5,25 +5,27 @@ using UnityEngine;
 
 public class WeaponSystem : MonoBehaviour
 {
-	private Transform player;
+	private Transform parent;
+
+	public Transform missileLock;
 
 	public List<Weapon> ActiveWeapons = new List<Weapon>();
 
 	// Use this for initialization
 	private void Start()
 	{
-		player = transform.root;
+		parent = transform.root;
 	}
 
 	public void FireWeapon()
 	{
-		var rbVelocity = player.GetComponent<Rigidbody>().velocity;
+		var rbVelocity = parent.GetComponent<Rigidbody>().velocity;
 		bool updateWeapons = false;
 		foreach (var weapon in ActiveWeapons)
 		{
 			if (weapon != null)
 			{
-				weapon.Fire(rbVelocity);
+				weapon.Fire(rbVelocity, missileLock);
 			}
 			else
 			{

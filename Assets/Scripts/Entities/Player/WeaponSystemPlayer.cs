@@ -8,12 +8,27 @@ public class WeaponSystemPlayer : MonoBehaviour
 	private WeaponSystem weapons;
 	private Transform turret;
 	private Transform arms;
+	private Transform mainCamera;
 
 	private void Start()
 	{
 		weapons = GetComponentInChildren<WeaponSystem>();
 		turret = weapons.transform;
 		arms = turret.Find("arms").transform;
+		mainCamera = Camera.main.transform;
+	}
+
+	public void Update()
+	{
+		RaycastHit hit;
+		if (Physics.Raycast(mainCamera.position, mainCamera.forward, out hit, 500f))
+		{
+			var enemy = hit.collider.GetComponentInParent<Enemy>();
+			if (enemy != null)
+			{
+				weapons.missileLock = enemy.transform;
+			}
+		}
 	}
 
 	private void FixedUpdate()

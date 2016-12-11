@@ -24,7 +24,7 @@ public class Laser : MonoBehaviour
 		if (Physics.Raycast(ray, out hit, 100))
 		{
 			line.SetPosition(1, hit.point);
-			var health = hit.collider.GetComponent<Health>();
+			var health = hit.collider.GetComponentInParent<Health>();
 			if (health != null)
 			{
 				var damage = DamagePerSecond * Time.deltaTime;

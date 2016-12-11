@@ -63,7 +63,7 @@ public class HardpointManager : MonoBehaviour
 		ChangeTurret(TurretParts[CurrentTurretPart]);
 
 		//debugging
-		ChangeWeapon(WeaponSlots[0], WeaponParts[0]);
+		ChangeWeapon(WeaponSlots[1], WeaponParts[0]);
 	}
 
 	private void OnGUI()
