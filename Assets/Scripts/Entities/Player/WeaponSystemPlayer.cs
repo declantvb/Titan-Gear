@@ -9,6 +9,7 @@ public class WeaponSystemPlayer : MonoBehaviour
 	private Transform turret;
 	private Transform arms;
 	private Transform mainCamera;
+	private bool togglingLook;
 
 	private void Start()
 	{
@@ -43,19 +44,27 @@ public class WeaponSystemPlayer : MonoBehaviour
 
 	public void HandleLook()
 	{
-		if (Input.GetKeyDown(KeyCode.M))
+		if (Input.GetKey(KeyCode.M))
 		{
-			MouseLook = !MouseLook;
-			if (MouseLook)
+			if (!togglingLook)
 			{
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
+				MouseLook = !MouseLook;
+				if (MouseLook)
+				{
+					Cursor.lockState = CursorLockMode.Locked;
+					Cursor.visible = false;
+				}
+				else
+				{
+					Cursor.lockState = CursorLockMode.None;
+					Cursor.visible = true;
+				}
+				togglingLook = true; 
 			}
-			else
-			{
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			}
+		}
+		else
+		{
+			togglingLook = false;
 		}
 
 		if (MouseLook)

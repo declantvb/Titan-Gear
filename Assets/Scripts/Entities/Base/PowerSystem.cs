@@ -18,9 +18,6 @@ public class PowerSystem : MonoBehaviour
 	public ConsumerType? Prioritise;
 	public ConsumerType? Deprioritise;
 
-	public GameObject FuelSlider;
-	public GameObject BatterySlider;
-
 	public float draw;
 	public float charge;
 	public float powerUsed;
@@ -148,16 +145,6 @@ public class PowerSystem : MonoBehaviour
 		if (GUI.Button(new Rect(10, 160, 70, 20), ConsumerType.Mobility.ToString()))
 		{
 			Prioritise = ConsumerType.Mobility;
-		}
-
-		if (FuelSlider != null)
-		{
-			FuelSlider.GetComponent<Slider>().value = FuelTank.Stored / FuelTank.Capacity;
-		}
-
-		if (BatterySlider != null)
-		{
-			BatterySlider.GetComponent<Slider>().value = BatteryBank.Stored / BatteryBank.Capacity;
 		}
 	}
 }

@@ -33,6 +33,7 @@ public class PartSlot : MonoBehaviour
 
 	public enum SlotType
 	{
+		Chassis,
 		Mobility,
 		Turret,
 		Large,

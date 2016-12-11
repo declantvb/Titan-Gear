@@ -316,6 +316,21 @@ public class Inventory : MonoBehaviour
 		}
 	}
 
+	public Item getItemInSlot(int slotId)
+	{
+		if (slotId < SlotContainer.transform.childCount)
+		{
+			var trans = SlotContainer.transform.GetChild(slotId);
+
+			if (trans.childCount != 0)
+			{
+				return trans.GetChild(0).GetComponent<ItemOnObject>().item;
+			}
+		}
+
+		return null;
+	}
+
 	public bool characterSystem()
 	{
 		if (GetComponent<EquipmentSystem>() != null)

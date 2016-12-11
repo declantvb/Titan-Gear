@@ -29,21 +29,22 @@ public class EquipmentSystem : MonoBehaviour
 		slotsInTotal = inv.width * inv.height;
 	}
 
-	public void SetMainSlots(PartSlot mobility, PartSlot turret)
+	public void SetMainSlots(PartSlot chassis, PartSlot mobility, PartSlot turret)
 	{
-		hardpointOfSlots[0] = mobility;
-		hardpointOfSlots[1] = turret;
+		hardpointOfSlots[0] = chassis;
+		hardpointOfSlots[1] = mobility;
+		hardpointOfSlots[2] = turret;
 	}
 
 	public void SetWeaponSlots(List<PartSlot> weaponSlots)
 	{
 		//primitive for now
-		UpdateSlotCount(weaponSlots.Count + 2);
+		UpdateSlotCount(weaponSlots.Count + 3);
 
 		for (int i = 0; i < weaponSlots.Count; i++)
 		{
 			var slot = weaponSlots[i];
-			hardpointOfSlots[i + 2] = slot;
+			hardpointOfSlots[i + 3] = slot;
 		}
 	}
 
