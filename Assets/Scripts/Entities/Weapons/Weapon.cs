@@ -62,7 +62,10 @@ public class Weapon : MonoBehaviour
 				var missile = newBullet.GetComponent<Missile>();
 				missile.DamageModifier = WeaponDescriptor.Damage;
 				missile.BlastRadius = WeaponDescriptor.Radius;
-				missile.Target = missileLock;
+				if (WeaponDescriptor.Guided)
+				{
+					missile.Target = missileLock; 
+				}
 				break;
 
 			case WeaponStyle.Laser:

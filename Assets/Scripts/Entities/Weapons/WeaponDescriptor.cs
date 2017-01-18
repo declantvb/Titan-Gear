@@ -15,6 +15,8 @@ public class WeaponDescriptor
 	public float Damage;
 	public float Radius;
 
+	public bool Guided;
+
 	//In kWh, as a proxy for joules
 	public float PowerDrawPerShot;
 }

@@ -14,6 +14,7 @@ public class HudManager : MonoBehaviour
 	private Speedometer speedometer;
 	private Health playerHealth;
 	private PowerSystem playerPower;
+	private MissileLock missileLock;
 
 	private void Start()
 	{
@@ -23,12 +24,14 @@ public class HudManager : MonoBehaviour
 		playerPower = player.GetComponent<PowerSystem>();
 		weaponsPanel = GetComponentInChildren<WeaponsUIPanel>();
 		speedometer = GetComponentInChildren<Speedometer>();
+		missileLock = GetComponentInChildren<MissileLock>();
 	}
 
 	private void UpdateHud()
 	{
 		weaponsPanel.UpdateWeapons(player);
 		speedometer.UpdateWith(player);
+		missileLock.UpdateWith(player);
 	}
 
 	public void Update()

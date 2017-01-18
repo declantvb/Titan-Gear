@@ -8,7 +8,7 @@ public class WeaponSystemPlayer : MonoBehaviour
 	private WeaponSystem weapons;
 	private Transform turret;
 	private Transform arms;
-	private Transform mainCamera;
+	private Camera mainCamera;
 	private bool togglingLook;
 
 	private void Start()
@@ -16,19 +16,34 @@ public class WeaponSystemPlayer : MonoBehaviour
 		weapons = GetComponentInChildren<WeaponSystem>();
 		turret = weapons.transform;
 		arms = turret.Find("arms").transform;
-		mainCamera = Camera.main.transform;
+		mainCamera = Camera.main;
 	}
 
 	public void Update()
 	{
-		RaycastHit hit;
-		if (Physics.Raycast(mainCamera.position, mainCamera.forward, out hit, 500f))
+		var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+		if (enemies.Length > 0)
 		{
-			var enemy = hit.collider.GetComponentInParent<Enemy>();
-			if (enemy != null)
+			var viewRect = new Rect(0, 0, 1, 1);
+			var midPoint = new Vector2(0.5f, 0.5f);
+
+			var minDist = 2f;
+			Transform minEnemy = enemies[0].transform;
+
+			foreach (var enemy in enemies)
 			{
-				weapons.missileLock = enemy.transform;
+				var viewPos = mainCamera.WorldToViewportPoint(enemy.transform.position);
+				var screenPos = new Vector2(viewPos.x, viewPos.y);
+				var dist = Vector2.Distance(screenPos, midPoint);
+				if (viewRect.Contains(screenPos) && dist < minDist)
+				{
+					minDist = dist;
+					minEnemy = enemy.transform;
+				}
 			}
+
+			weapons.missileLock = minEnemy;
 		}
 	}
 
@@ -59,7 +74,7 @@ public class WeaponSystemPlayer : MonoBehaviour
 					Cursor.lockState = CursorLockMode.None;
 					Cursor.visible = true;
 				}
-				togglingLook = true; 
+				togglingLook = true;
 			}
 		}
 		else

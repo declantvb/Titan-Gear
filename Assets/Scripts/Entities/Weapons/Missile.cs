@@ -51,9 +51,15 @@ public class Missile : MonoBehaviour
 		}
 
 		safetyTime -= Time.fixedDeltaTime;
-		if (safetyTime <= 0 && Target != null)
+		if (safetyTime <= 0)
 		{
-			AlignToTarget();
+			if (Target != null)
+			{
+				AlignToTarget();
+			}
+
+			var drag = Vector3.Cross(Vector3.Cross(_rigidbody.velocity, transform.forward), transform.forward) * 10;
+			_rigidbody.AddForce(drag);
 
 			//thrust
 			_rigidbody.AddForce(transform.forward * ThrustForce, ForceMode.Force);
@@ -78,19 +84,11 @@ public class Missile : MonoBehaviour
 
 		var targetPositionAtHit = targetPosition + targetVelocity * timeToTarget;
 
-		var desiredHeading = targetPositionAtHit - transform.position;
-
-		var currentVelocity = _rigidbody.velocity;
 		var currentHeading = transform.forward;
-
-		var blendedHeading = currentHeading * 0.5f + currentVelocity.normalized * 0.5f;
+		var desiredHeading = targetPositionAtHit - transform.position;
 
 		var headingError = Vector3.Cross(currentHeading, desiredHeading);
 		var headingCorrection = headingController.Update(headingError, Time.deltaTime);
-
-		var drag = Vector3.Cross(Vector3.Cross(currentVelocity, currentHeading), currentHeading) * 10;
-
-		_rigidbody.AddForce(drag);
 
 		_rigidbody.AddTorque(headingCorrection.normalized * Mathf.Min(headingCorrection.magnitude, 5000f * Time.deltaTime));
 	}
@@ -101,15 +99,22 @@ public class Missile : MonoBehaviour
 		var hits = Physics.OverlapSphere(point, BlastRadius);
 		var enemyHits = hits.Select(x => x.GetComponentInParent<Health>()).Distinct();
 
+		var directHit = other.GetComponentInParent<Health>();
+		if (directHit)
+		{
+			directHit.YaGotShot(DamageModifier);
+		}
+
 		foreach (var enemy in enemyHits)
 		{
-			if (enemy != null)
+			if (enemy != null && enemy != directHit)
 			{
 				var dist = (point - enemy.transform.position).magnitude;
 				var effect = 1 - (dist / BlastRadius);
 				enemy.YaGotShot(Mathf.Max(0, effect) * DamageModifier);
 			}
 		}
+
 		Destroy(explosion, 5f);
 	}
 }
